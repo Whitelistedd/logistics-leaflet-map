@@ -65,6 +65,7 @@ const Home = () => {
       </Head>
       <Container>
         <StyledTable
+          pagination={false}
           rowSelection={{
             type: "radio",
             onChange: (_, selectedRoute) => handleTableChange(selectedRoute),
@@ -86,6 +87,9 @@ const StyledTable = styled(Table)`
 export const Container = styled.div`
   display: flex;
   height: 100vh;
+  @media only screen and (max-width: 1700px) {
+    flex-wrap: wrap;
+  }
 `;
 
 export default Home;
