@@ -11,13 +11,14 @@ export const GlobalStyles = createGlobalStyle`
   
   html,
   body {
-    max-width: 100vw;
-    overflow-x: hidden;
+    min-width: 100vw;
+    min-height: 100vh;
   }
-  
-  #map {
-    height: 180px;
+
+  #__next {
+    height: 100%;
   }
+
   
   body {
     color: rgb(var(--foreground-rgb));
@@ -32,16 +33,6 @@ export const GlobalStyles = createGlobalStyle`
   a {
     color: inherit;
     text-decoration: none;
-  }
-  
-  #mapId {
-    height: 100vh;
-    width: 100vw;
-  }
-
-  .leaflet-routing-container {
-    background-color: white;
-    padding: 10px;
   }
   
   `;

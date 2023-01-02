@@ -2,6 +2,7 @@ import "leaflet/dist/leaflet.css";
 import React from "react";
 import dynamic from "next/dynamic";
 import { useAppSelector } from "@/redux/store";
+import styled from "styled-components";
 
 const TileLayer = dynamic(
   () => import("react-leaflet").then((mod) => mod.TileLayer),
@@ -31,9 +32,19 @@ export const Map = () => {
   );
 
   return (
-    <MapContainer zoom={5} center={[70, 70]} id="mapId">
-      <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}" />
+    <StyledMapContainer zoom={5} center={[70, 70]} id="mapId">
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <RoutingMachine selectedRoute={selectedRoute} />
-    </MapContainer>
+    </StyledMapContainer>
   );
 };
+
+const StyledMapContainer = styled(MapContainer)`
+  min-height: 100vh;
+  width: 100vw;
+  .leaflet-routing-container {
+    background-color: white;
+    padding: 10px;
+    overflow-y: scroll;
+  }
+`;
