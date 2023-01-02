@@ -1,5 +1,5 @@
 import type { AppProps } from "next/app";
-import { GlobalStyles } from "../src/styles/GlobalStyles";
+import { GlobalStyles } from "@/styles/GlobalStyles";
 import { Provider } from "react-redux";
 import { wrapper } from "@/redux/store";
 
