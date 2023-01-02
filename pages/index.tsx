@@ -1,11 +1,62 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import { Map } from "@/components/Map";
+import { NextPage } from "next";
+import { Table } from "@/components/Table";
+import { axiosInstance } from "@/lib/axiosInstance";
+import { useGetRoutesQuery } from "@/services/routes";
+import { useMemo, useState } from "react";
+import styled from "styled-components";
+import { AppDispatch } from "@/redux/store";
+import { addRoute } from "@/redux/slices/routes";
+import { RoutesType } from "@/types/routes";
 
-const inter = Inter({ subsets: ['latin'] })
+const Home = () => {
+  const dispatch = AppDispatch();
+  const { data, error, isLoading } = useGetRoutesQuery();
 
-export default function Home() {
+  const handleTableChange = (selectedRoute: RoutesType) => {
+    dispatch(addRoute(selectedRoute[0]));
+  };
+
+  const columns = useMemo(
+    () => [
+      {
+        title: "Номер заявки",
+        dataIndex: "requestNumber",
+        key: "1",
+      },
+      {
+        title: "Координаты ОТ lat",
+        dataIndex: "fromLat",
+        key: "2",
+      },
+      {
+        title: "Координаты ОТ lng",
+        dataIndex: "fromLng",
+        key: "3",
+      },
+      {
+        title: "Координаты ДО lat",
+        dataIndex: "toLat",
+        key: "4",
+      },
+      {
+        title: "Координаты ДО lng",
+        dataIndex: "toLng",
+        key: "5",
+      },
+    ],
+    []
+  );
+
+  if (error) {
+    return "Error";
+  }
+
+  if (isLoading) {
+    return "loading...";
+  }
+
   return (
     <>
       <Head>
@@ -14,110 +65,28 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>pages/index.tsx</code>
-          </p>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{' '}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
-          </div>
-        </div>
-
-        <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-          <div className={styles.thirteen}>
-            <Image
-              src="/thirteen.svg"
-              alt="13"
-              width={40}
-              height={31}
-              priority
-            />
-          </div>
-        </div>
-
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
+      <Container>
+        <StyledTable
+          rowSelection={{
+            type: "radio",
+            onChange: (_, selectedRoute) => handleTableChange(selectedRoute),
+          }}
+          dataSource={data}
+          columns={columns}
+        />
+        <Map />
+      </Container>
     </>
-  )
-}
+  );
+};
+
+const StyledTable = styled(Table)`
+  min-width: 640px;
+  margin: 10px;
+`;
+
+export const Container = styled.div`
+  display: flex;
+`;
+
+export default Home;
