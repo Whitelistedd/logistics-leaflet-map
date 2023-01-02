@@ -3,10 +3,10 @@ import { Map } from "@/components/Map";
 import { NextPage } from "next";
 import { Table } from "@/components/Table";
 import { axiosInstance } from "@/lib/axiosInstance";
-import { useGetRoutesQuery } from "@/services/routes";
+import { routesApi, useGetRoutesQuery } from "@/services/routes";
 import { useMemo, useState } from "react";
 import styled from "styled-components";
-import { AppDispatch } from "@/redux/store";
+import { AppDispatch, wrapper } from "@/redux/store";
 import { addRoute } from "@/redux/slices/routes";
 import { RoutesType } from "@/types/routes";
 
@@ -88,5 +88,17 @@ const StyledTable = styled(Table)`
 export const Container = styled.div`
   display: flex;
 `;
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) => async (context) => {
+    await store.dispatch(routesApi.endpoints.getRoutes.initiate());
+
+    await Promise.all(store.dispatch(routesApi.util.getRunningQueriesThunk()));
+
+    return {
+      props: {},
+    };
+  }
+);
 
 export default Home;
